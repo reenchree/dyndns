@@ -35,6 +35,8 @@ jobs:
         REPOSITORY: dyndns
         #IMAGE_TAG: ${{ github.sha }}
         IMAGE_TAG: latest
+        platforms: linux/amd64,linux/arm64
+
       run: |
         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
