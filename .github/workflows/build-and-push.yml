@@ -16,23 +16,20 @@ jobs:
       uses: docker/setup-buildx-action@v3
 
     - name: 🔐 Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2
+      uses: aws-actions/configure-aws-credentials@v4
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
+        aws-region: us-west-2
 
     - name: 🔑 Log in to Amazon ECR
-      run: |
-        aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
 
     - name: 🧱 Build and push Docker image
       env:
-        ECR_REGISTRY: ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
-        ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-      run: |
-        IMAGE_TAG=$ECR_REGISTRY/$ECR_REPOSITORY:latest
-
-        docker build -t $IMAGE_TAG .
-        docker push $IMAGE_TAG
-
+        REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        REPOSITORY: my-ecr-repo
+        #IMAGE_TAG: ${{ github.sha }}
+        IMAGE_TAG: latest
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
