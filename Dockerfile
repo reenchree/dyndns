@@ -8,8 +8,7 @@ COPY Gemfile Gemfile.lock .
 
 RUN apk add --no-cache build-base
 
-RUN bundle config set deployment true \
- && bundle config set without 'test development' \
+RUN bundle config set without 'test development' \
  && bundle install --jobs 4
 
 
