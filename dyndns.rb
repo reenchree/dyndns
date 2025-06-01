@@ -1,0 +1,43 @@
+require 'aws-sdk-route53'
+require 'http'
+
+class DynDNS
+  def initialize(route53_client: Aws::Route53::Client.new, ip_fetcher: nil)
+    @route53 = route53_client
+    @ip_fetcher = ip_fetcher || -> { HTTP.get('https://ifconfig.me/ip').body.strip }
+  end
+
+  def update(domains_env)
+    ip = @ip_fetcher.call
+    domains = parse_domains(domains_env)
+
+    domains.each do |name, zone_id|
+      @route53.change_resource_record_sets(
+        hosted_zone_id: zone_id,
+        change_batch: {
+          changes: [
+            {
+              action: 'UPSERT',
+              resource_record_set: {
+                name: name,
+                type: 'A',
+                ttl: 500,
+                resource_records: [{ value: ip }]
+              }
+            }
+          ]
+        }
+      )
+    end
+  end
+
+  private
+
+  def parse_domains(raw)
+    raw.lines.map(&:strip).to_h do |line|
+      name, id = line.split('=')
+      [name, id]
+    end
+  end
+end
+
