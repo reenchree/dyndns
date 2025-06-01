@@ -28,7 +28,7 @@ jobs:
     - name: 🧱 Build and push Docker image
       env:
         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        REPOSITORY: my-ecr-repo
+        REPOSITORY: dyndns
         #IMAGE_TAG: ${{ github.sha }}
         IMAGE_TAG: latest
       run: |
