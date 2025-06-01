@@ -35,5 +35,10 @@ jobs:
         context: .
         push: true
         platforms: linux/arm64
-        tags: ${{ steps.login-ecr.outputs.registry }}/dyndns:latest
         provenance: false
+        tags: |
+          ${{ steps.login-ecr.outputs.registry }}/dyndns:latest
+          ${{ steps.login-ecr.outputs.registry }}/dyndns:${{ github.sha }}
+        labels: |
+          org.opencontainers.image.source=${{ github.repository }}
+          org.opencontainers.image.revision=${{ github.sha }}
