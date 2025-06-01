@@ -1,9 +1,6 @@
 require_relative 'dyndns'
 
-dyndns = DynDNS.new(
-  route53_client: Aws::Route53::Client.new,
-  ip_fetcher: -> { HTTP.get('https://ifconfig.me/ip').body.strip },
-)
+dyndns = DynDNS.new
 
 domains_env = ENV['DOMAINS']
 if domains_env.nil? || domains_env.empty?

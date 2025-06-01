@@ -4,7 +4,7 @@ require 'http'
 class DynDNS
   def initialize(route53_client: Aws::Route53::Client.new, ip_fetcher: nil)
     @route53 = route53_client
-    @ip_fetcher = ip_fetcher || -> { HTTP.get('https://ifconfig.me/ip').body.strip }
+    @ip_fetcher = ip_fetcher || -> { HTTP.get('https://ifconfig.me/ip').body.to_s.strip }
   end
 
   def update(domains_env)
