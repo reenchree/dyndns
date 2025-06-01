@@ -36,3 +36,4 @@ jobs:
         push: true
         platforms: linux/arm64
         tags: ${{ steps.login-ecr.outputs.registry }}/dyndns:latest
+        provenance: false
