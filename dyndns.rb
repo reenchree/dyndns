@@ -12,6 +12,7 @@ class DynDNS
     domains = parse_domains(domains_env)
 
     domains.each do |name, zone_id|
+      puts "[BEGIN] Updating #{name} on #{zone_id}"
       @route53.change_resource_record_sets(
         hosted_zone_id: zone_id,
         change_batch: {
@@ -28,6 +29,7 @@ class DynDNS
           ]
         }
       )
+      puts "[END] Updating #{name} on #{zone_id}"
     end
   end
 

@@ -3,10 +3,14 @@ FROM ruby:3.4-alpine
 WORKDIR /app
 
 COPY dyndns.rb .
+COPY main.rb .
 COPY Gemfile Gemfile.lock .
 
-RUN apk add --no-cache build-base #libffi-dev
-ENV BUNDLE_WITHOUT="test development"
-RUN bundle install
+RUN apk add --no-cache build-base
 
-CMD ["ruby", "/app/dyndns.rb"]
+RUN bundle config set deployment true \
+ && bundle config set without 'test development' \
+ && bundle install --jobs 4
+
+
+CMD ["ruby", "/app/main.rb"]
